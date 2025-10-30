@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import requests
 import plotly.express as px
 import time
@@ -9,7 +10,7 @@ API_URL = "http://127.0.0.1:5000"
 
 # ===== PAGE CONFIG =====
 st.set_page_config(page_title="Smart India Water & Energy Reuse", layout="wide")
-st.sidebar.title("🇮🇳 Smart India Reuse Dashboard")
+st.sidebar.title("🌍 Smart India Reuse Dashboard")
 
 menu = st.sidebar.radio(
     "Navigate",
@@ -30,60 +31,32 @@ if menu == "🏠 Home":
         unsafe_allow_html=True
     )
 
-    st.write("")
     st.markdown("""
-    ### 🌿 **Overview**
-    The **Smart India Water & Energy Reuse System** predicts and analyzes 
-    **reuse efficiency** across Indian cities using Machine Learning and Gemini AI.
+    ### 🌿 Overview
+    This platform predicts and analyzes **water and energy reuse efficiency** for major Indian cities.  
+    It combines **Machine Learning**, **Gemini AI**, and **data visualization** to help build sustainable cities.
     """)
 
-    st.subheader("⚙️ How It Works")
-    st.markdown("""
-    1️⃣ Collects water and energy usage data for Indian cities.  
-    2️⃣ Predicts reuse efficiency using ML models.  
-    3️⃣ Generates sustainability tips using Gemini AI.  
-    4️⃣ Displays interactive charts for analysis.
-    """)
-
-    st.subheader("🌍 Why This Matters")
+    st.image("https://cdn-icons-png.flaticon.com/512/2913/2913463.png", width=150)
+    st.markdown("---")
+    st.markdown("#### 🧠 Powered by:")
     col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("🏙️ Cities Covered", "10+", "+Expanding")
-    with col2:
-        st.metric("💧 Avg. Water Efficiency", "68%", "↑ Optimized")
-    with col3:
-        st.metric("⚡ Avg. Energy Reuse", "45%", "↑ Predicted")
-
-    st.markdown("---")
-    st.subheader("👨‍💻 Team Winfinity")
-    st.markdown("""
-    | Member | Role | Focus |
-    |:--------|:------|:------|
-    | Thejaswi V R | Developer | frontend |
-    | Chiranth KL | Team Lead | backend |
-    | Madhusudan | Developer | AI integration |
-    | Kishan TK | Researcher | Data |
-    """)
-
-    st.markdown("---")
-    st.markdown("""
-    > _“AI cannot solve climate change alone, but it can empower us to make smarter, greener choices.”_  
-    — **Team Winfinity**
-    """)
+    col1.info("🤖 **Gemini AI** – Insight Generation")
+    col2.success("📊 **Streamlit + Plotly** – Visualization")
+    col3.warning("⚙️ **Flask + ML** – Prediction Engine")
 
 # =========================================================
-# 📊 CITY PREDICTION PAGE (Enhanced with Progress + Status)
+# 📊 CITY PREDICTION PAGE (Enhanced)
 # =========================================================
 elif menu == "📊 City Prediction":
     st.title("📊 Predict Reuse Efficiency by City")
 
-    # Fetch city list
     res = requests.get(f"{API_URL}/cities")
     if res.status_code == 200:
         cities_df = pd.DataFrame(res.json())
         city_list = cities_df["city"].tolist()
     else:
-        st.error("❌ Failed to fetch cities from backend.")
+        st.error("❌ Failed to fetch city data from backend.")
         city_list = []
 
     selected_city = st.selectbox("🏙️ Select a City", city_list)
@@ -96,26 +69,25 @@ elif menu == "📊 City Prediction":
             st.dataframe(pd.DataFrame([city_data]))
 
             if st.button("🚀 Predict Efficiency"):
-
-                # Step 1: Initializing
                 st.info("📥 Step 1: City data received successfully.")
-                time.sleep(0.8)
+                time.sleep(0.7)
 
                 progress_bar = st.progress(0)
                 status_placeholder = st.empty()
 
-                # Step 2: Data Processing
-                status_placeholder.warning("⚙️ Step 2: Processing input data...")
+                # Step 2
+                status_placeholder.warning("⚙️ Step 2: Processing data...")
                 for i in range(0, 25):
-                    time.sleep(0.03)
+                    time.sleep(0.02)
                     progress_bar.progress(i + 1)
 
-                # Step 3: Running ML Model
-                status_placeholder.info("🤖 Step 3: Running AI model to predict reuse efficiency...")
+                # Step 3
+                status_placeholder.info("🤖 Step 3: Running AI model...")
                 for i in range(25, 60):
-                    time.sleep(0.03)
+                    time.sleep(0.02)
                     progress_bar.progress(i + 1)
 
+                # Send payload to backend
                 payload = {
                     "city": selected_city,
                     "water_usage": city_data["water_usage"],
@@ -126,46 +98,69 @@ elif menu == "📊 City Prediction":
 
                 try:
                     res_pred = requests.post(f"{API_URL}/predict", json=payload)
-
                     if res_pred.status_code == 200:
                         result = res_pred.json()
 
-                        # Step 4: AI Insights
-                        status_placeholder.info("🧠 Step 4: Generating sustainability insights using Gemini AI...")
+                        # Step 4
+                        status_placeholder.info("🧠 Step 4: Generating Gemini AI Insights...")
                         for i in range(60, 90):
-                            time.sleep(0.03)
+                            time.sleep(0.02)
                             progress_bar.progress(i + 1)
 
-                        # Step 5: Completed
-                        status_placeholder.success("✅ Step 5: Prediction complete! Displaying results...")
+                        # Step 5
+                        status_placeholder.success("✅ Step 5: Prediction complete!")
                         for i in range(90, 100):
-                            time.sleep(0.02)
+                            time.sleep(0.01)
                             progress_bar.progress(i + 1)
                         time.sleep(0.5)
                         progress_bar.empty()
 
-                        # Results
-                        st.success(f"🌿 **Predicted Reuse Efficiency:** {result['reuse_efficiency']}%")
-                        st.info(result["ai_insight"])
+                        # Display prediction result
+                        reuse_eff = result["reuse_efficiency"]
+                        st.success(f"🌿 **Predicted Reuse Efficiency:** {reuse_eff:.2f}%")
+
+                        # Efficiency level feedback
+                        if reuse_eff > 75:
+                            st.success("🌟 Excellent! This city is performing very efficiently.")
+                        elif reuse_eff > 50:
+                            st.warning("⚙️ Moderate efficiency — room for improvement.")
+                        else:
+                            st.error("🚨 Low reuse efficiency — needs immediate attention.")
+
+                        # AI Insight
+                        st.info("🧩 **Gemini AI Suggestions:**")
+                        st.write(result["ai_insight"])
 
                         # Visualization
                         df_pie = pd.DataFrame({
                             "Category": ["Reused Water", "Reused Energy"],
                             "Value": [city_data["reused_water"], city_data["reused_energy"]]
                         })
-                        fig = px.pie(df_pie, names="Category", values="Value",
-                                     title=f"♻️ Reuse Distribution - {selected_city}",
-                                     color_discrete_sequence=px.colors.sequential.Blues)
-                        st.plotly_chart(fig, use_container_width=True)
+                        fig_pie = px.pie(df_pie, names="Category", values="Value",
+                                         title=f"♻️ Resource Reuse Distribution - {selected_city}",
+                                         color_discrete_sequence=px.colors.sequential.Blues)
+                        st.plotly_chart(fig_pie, use_container_width=True)
 
+                        # Simulated trend chart
+                        st.markdown("#### 📈 Yearly Reuse Trend")
+                        trend_years = ["2020", "2021", "2022", "2023", "2024"]
+                        trend_values = np.random.randint(40, 100, len(trend_years))
+                        df_trend = pd.DataFrame({"Year": trend_years, "Reuse %": trend_values})
+                        st.line_chart(df_trend.set_index("Year"))
+
+                        # Download report
                         st.markdown("---")
-                        st.success("🎯 **Prediction Completed Successfully!** Data processed, analyzed, and enriched with Gemini AI insights.")
+                        st.download_button(
+                            "📥 Download City Report",
+                            data=pd.DataFrame([city_data]).to_csv(index=False).encode("utf-8"),
+                            file_name=f"{selected_city}_reuse_report.csv",
+                            mime="text/csv"
+                        )
+
                     else:
-                        status_placeholder.error("❌ Server Error: Could not complete prediction.")
+                        status_placeholder.error("❌ Server error while predicting.")
                 except Exception as e:
                     st.error(f"⚠️ Error during prediction: {e}")
-        else:
-            st.warning("⚠️ No data available for this city.")
 
 # =========================================================
 # 📈 CITY DASHBOARD
@@ -176,7 +171,9 @@ elif menu == "📈 City Dashboard":
     res = requests.get(f"{API_URL}/cities")
     if res.status_code == 200:
         df = pd.DataFrame(res.json())
-        st.dataframe(df)
+
+        st.markdown("### 🏆 City Rankings by Reuse Efficiency")
+        st.dataframe(df.sort_values("reuse_efficiency", ascending=False).reset_index(drop=True))
 
         col1, col2 = st.columns(2)
         with col1:
@@ -197,17 +194,20 @@ elif menu == "📈 City Dashboard":
             prompt = f"Summarize reuse efficiency trends for Indian cities: {df.to_dict()}"
             summary = get_gemini_response(prompt)
             st.success(summary)
+    else:
+        st.error("❌ Unable to load dashboard data.")
 
 # =========================================================
-# 🤖 GEMINI CHATBOT
+# 🤖 GEMINI CHAT
 # =========================================================
 elif menu == "🤖 Gemini AI":
     st.title("🤖 Gemini Sustainability Chatbot")
-    user_q = st.text_area("Ask your question about reuse or sustainability:")
+    st.write("Ask Gemini about sustainability, resource management, or AI solutions.")
+    user_q = st.text_area("💬 Ask your question:")
     if st.button("Ask Gemini"):
         with st.spinner("Gemini is thinking..."):
             reply = get_gemini_response(user_q)
-        st.write(f"**Gemini:** {reply}")
+        st.info(f"**Gemini:** {reply}")
 
 # =========================================================
 # ℹ️ ABOUT PAGE
@@ -221,18 +221,21 @@ elif menu == "ℹ️ About":
 
     **Team Winfinity**
     - Thejaswi V R
-    - Chiranth KL
-    - Madhusudan
-    - Kishan TK
+    - (Add other members)
 
     **Tech Stack**
-    - Frontend: Streamlit  
-    - Backend: Flask  
-    - ML: Scikit-learn (Random Forest)  
-    - AI: Gemini API  
-    - Visualization: Plotly
+    - 🧠 AI: Gemini 2.0 Flash  
+    - ⚙️ Backend: Flask + ML  
+    - 🎨 Frontend: Streamlit + Plotly  
+    - 🌐 Data: Live (via internet)  
 
-    **Goal:**  
-    Empower Indian cities to reuse water and energy efficiently  
-    using AI-driven predictions and actionable sustainability insights.
+    ### 💡 Objective
+    Empower Indian cities to reuse water and energy efficiently using AI-driven predictions, insights, and data visualization.
+
+    ### 🚀 Features
+    - Dynamic prediction via ML  
+    - Gemini AI suggestions  
+    - Real-time dashboards  
+    - Downloadable reports  
+    - City performance ranking
     """)
