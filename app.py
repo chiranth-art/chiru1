@@ -221,7 +221,9 @@ elif menu == "ℹ️ About":
 
     **Team Winfinity**
     - Thejaswi V R
-    - (Add other members)
+    - Chiranth KL
+    - Madhusudan 
+    - Kishan TK
 
     **Tech Stack**
     - 🧠 AI: Gemini 2.0 Flash  
